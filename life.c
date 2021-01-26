@@ -25,6 +25,7 @@ struct life {
 void clearScreen();
 void lifeNewGame(struct life *game, int height, int width, char *initialState);
 void lifeFreeMem(struct life *game);
+int lifeGetPos(struct life *game, int x, int y);
 void lifeDrawGen(struct life *game);
 void lifeNextGen(struct life *game);
 
@@ -52,7 +53,10 @@ char gen1[10 * 10] = {
 int main() {
   struct life game = LIFE_INIT;
   lifeNewGame(&game, 10, 10, gen1);
+  /* int counter = 0; */
   clearScreen();
+  lifeDrawGen(&game);
+  lifeNextGen(&game);
   lifeDrawGen(&game);
   lifeFreeMem(&game);
   return 0;
@@ -91,5 +95,19 @@ void lifeDrawGen(struct life *game) {
       }
     }
     printf("\n");
+  }
+}
+
+void lifeNextGen(struct life *game){
+  char *nextGen;
+  nextGen = malloc(sizeof(char) * game->width * game->height);
+  for (int y=0; y<game->height; y++){
+    for (int x=0; x<game->width; x++){
+      nextGen[lifeGetPos(game, x, y)] = game->cell[lifeGetPos(game, x, y)];
+    }
+  }
+  int c = game->height * game->width;
+  for (int l=0; l<c; l++) {
+    game->cell[l] = nextGen[l];
   }
 }
