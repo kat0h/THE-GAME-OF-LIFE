@@ -45,6 +45,8 @@ char gen1[10*10] = {
   0,0,0,0,0,0,0,0,0,0
 };
 */
+int gen1_width = 10;
+int gen1_height = 10;
 char gen1[10 * 10] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
     0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -53,14 +55,16 @@ char gen1[10 * 10] = {
 
 int main() {
   struct life game = LIFE_INIT;
-  lifeNewGame(&game, 10, 10, gen1);
+  lifeNewGame(&game, gen1_height, gen1_width, gen1);
   /* int counter = 0; */
   clearScreen();
   lifeDrawGen(&game);
-  lifeNextGen(&game);
-  printf("\n");
-  lifeDrawGen(&game);
-  lifeFreeMem(&game);
+  char c;
+  while (scanf("%c", &c), c != 'q') {
+    clearScreen();
+    lifeNextGen(&game);
+    lifeDrawGen(&game);
+  }
   return 0;
 }
 
