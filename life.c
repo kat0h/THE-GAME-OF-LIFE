@@ -80,7 +80,7 @@ void lifeDrawGen(struct life *game) {
   int width = game->width;
   for (int h = 0; h < height; h++) {
     for (int w = 0; w < width; w++) {
-      if (game->cell[h * 10 + w] == 0) {
+      if (game->cell[h * game->width + w] == 0) {
         printf("□ ");
       } else {
         printf("■ ");
@@ -90,4 +90,6 @@ void lifeDrawGen(struct life *game) {
   }
 }
 
-void lifeNextGen(struct life *game) {}
+void lifeNextGen(struct life *game) {
+  
+}
