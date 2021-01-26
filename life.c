@@ -27,6 +27,7 @@ void lifeNewGame(struct life *game, int height, int width, char *initialState);
 void lifeFreeMem(struct life *game);
 int lifeGetPos(struct life *game, int x, int y);
 void lifeDrawGen(struct life *game);
+int lifeLivesAround(struct life *game, int x, int y);
 void lifeNextGen(struct life *game);
 
 /*
@@ -57,6 +58,7 @@ int main() {
   clearScreen();
   lifeDrawGen(&game);
   lifeNextGen(&game);
+  printf("\n");
   lifeDrawGen(&game);
   lifeFreeMem(&game);
   return 0;
@@ -79,7 +81,9 @@ void lifeNewGame(struct life *game, int height, int width, char *initialState) {
 
 void lifeFreeMem(struct life *game) { free(game->cell); }
 
-int lifeGetPos(struct life *game, int x, int y){
+int lifeGetPos(struct life *game, int x, int y) {
+  if ((x < 0) || (x >= game->width) || (y < 0) || (y >= game->height))
+    return -1;
   return (y * game->width + x);
 }
 
@@ -98,16 +102,44 @@ void lifeDrawGen(struct life *game) {
   }
 }
 
-void lifeNextGen(struct life *game){
+int lifeLivesAround(struct life *game, int x, int y) {
+  int count = 0;
+  for (int a = x - 1; a <= x + 1; a++) {
+    for (int b = y - 1; b <= y + 1; b++) {
+      if (!(a == x && b == y)){
+        int pos = lifeGetPos(game, a, b);
+        if (pos != -1)
+          count += game->cell[pos];
+      }
+    }
+  }
+  return count;
+}
+
+void lifeNextGen(struct life *game) {
   char *nextGen;
   nextGen = malloc(sizeof(char) * game->width * game->height);
-  for (int y=0; y<game->height; y++){
-    for (int x=0; x<game->width; x++){
-      nextGen[lifeGetPos(game, x, y)] = game->cell[lifeGetPos(game, x, y)];
+  for (int y = 0; y < game->height; y++) {
+    for (int x = 0; x < game->width; x++) {
+      // 対応するセルの次の世代を求める
+      int cellArrive = lifeLivesAround(game, x, y);
+      // 生きている
+      if (game->cell[lifeGetPos(game, x, y)] == 1){
+        if (cellArrive == 2 || cellArrive == 3){
+          nextGen[lifeGetPos(game, x, y)] = 1;
+        } else if(cellArrive <= 1 || cellArrive >= 4){
+          nextGen[lifeGetPos(game, x, y)] = 0;
+        }
+      } else {
+        if (cellArrive == 3) {
+          nextGen[lifeGetPos(game, x, y)] = 1;
+        }
+      }
+      // 死んでいる
     }
   }
   int c = game->height * game->width;
-  for (int l=0; l<c; l++) {
+  for (int l = 0; l < c; l++) {
     game->cell[l] = nextGen[l];
   }
 }
