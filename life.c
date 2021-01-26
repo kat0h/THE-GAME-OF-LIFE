@@ -75,12 +75,16 @@ void lifeNewGame(struct life *game, int height, int width, char *initialState) {
 
 void lifeFreeMem(struct life *game) { free(game->cell); }
 
+int lifeGetPos(struct life *game, int x, int y){
+  return (y * game->width + x);
+}
+
 void lifeDrawGen(struct life *game) {
   int height = game->height;
   int width = game->width;
-  for (int h = 0; h < height; h++) {
-    for (int w = 0; w < width; w++) {
-      if (game->cell[h * game->width + w] == 0) {
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      if (game->cell[lifeGetPos(game, x, y)] == 0) {
         printf("□ ");
       } else {
         printf("■ ");
@@ -88,8 +92,4 @@ void lifeDrawGen(struct life *game) {
     }
     printf("\n");
   }
-}
-
-void lifeNextGen(struct life *game) {
-  
 }
